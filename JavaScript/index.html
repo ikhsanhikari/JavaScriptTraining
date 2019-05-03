@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hikari Java Script </title>
+</head>
+<body>
+	<button onclick="get()">send</button>
+	<div id="view">
+		
+	</div>
+	<form >
+		<input type="text" id="code"><br>
+		<input type="text" id="nama"><br>
+		<input type="text" id="deskripsi">
+	</form>
+	<button onclick="post()">post</button>
+</body>
+</html>
+<script type="text/javascript">
+	
+	function get(){
+		var view = document.getElementById('view');
+		var xhr =new XMLHttpRequest();
+		xhr.open('GET','http://localhost:8080/fakultas/findAll');
+		xhr.onload = function(){
+			if(xhr.status == 200){
+				let tamp = JSON.parse(xhr.responseText);
+				let jsonData = tamp.data;
+				let tampText = '';
+				for (var i = jsonData.length - 1; i >= 0; i--) {
+					tampText += 'Kode : '+jsonData[i].codeFakultas+
+					' </br> Nama : '+jsonData[i].namaFakultas+
+					' </br> Deskripsi:  '+jsonData[i].description+
+					'</br></br>';
+				}
+				view.innerHTML = tampText;
+			}else{
+				alert("Gagal")
+			}
+		};
+	xhr.send();	
+	}
+	function post(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST','http://localhost:8080/fakultas/save');
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		var payload = {};
+		payload.codeFakultas = document.getElementById('code').value;
+		payload.description = document.getElementById('deskripsi').value;
+		payload.namaFakultas = document.getElementById('nama').value;
+		console.log(payload);
+		xhr.onload = function(){
+			if (xhr.status === 200 ) {
+		        alert('Success Saving Data ');
+		    }
+		    else if (xhr.status !== 200) {
+		        alert('Request failed.  Returned status of ' + xhr.status);
+		    }
+		}
+		xhr.send(JSON.stringify(payload));
+		this.get();
+	}
+	
+</script>
